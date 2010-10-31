@@ -1,0 +1,41 @@
+Telechips TCC8902
+=================
+
+Preface
+-------
+This is a basic TCC8902 setup with too much proprietary code inside. Telechips should become more GPL compliant..!
+It's all work-in-progress, we're not finished with it yet.
+
+Device
+------
+Basic device is the HSG-X5A tablet. You can mix & match the stuff in proprietary to product a build for M1001 or M701.
+We'll fork the device and sort that out later on. :)
+
+Getting started
+---------------
+
+To initialize your local repository using the CyanogenMod trees, use a command like this:
+
+    repo init -u git://github.com/CyanogenMod/android.git -b froyo
+
+Then to sync up:
+
+    repo sync
+
+Add the tcc8902 device folder and change to it:
+
+    mkdir -p device/telechips/tcc8902
+    cd device/telechips/tcc8902
+
+Init the repo for that folder:
+
+    repo init -u git://github.com:Asure/android_device_telechips_tcc8902.git
+    repo sync
+
+Edit the following files to add the tcc8902 target for lunch combo:
+    
+    vendorsetup.sh
+    
+Please see the [CyanogenMod Wiki](http://wiki.cyanogenmod.com/) for building instructions.
+
+Please do not contact me with noob questions, i'm a busy person.

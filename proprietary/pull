@@ -1,0 +1,51 @@
+ De volumenaam van station D is NieuwVolume
+ Het volumenummer is 6095-81A9
+
+ Map van D:\telechips\froyo-good\proprietary
+
+13-10-2010  17:51    <DIR>          .
+13-10-2010  17:51    <DIR>          ..
+13-07-2010  03:42                95 01_telechips_omx.cfg
+13-07-2010  03:42               286 02_telechips_nodes.cfg
+03-08-2010  13:19            18.144 lib.TCC.sound.effect.so
+03-08-2010  15:17           140.448 libOMX.TCC.aacdec.so
+03-08-2010  15:18            97.264 libOMX.TCC.aacenc.so
+03-08-2010  15:18            63.788 libOMX.TCC.ac3dec.so
+03-08-2010  15:18            21.664 libOMX.TCC.apedec.so
+03-08-2010  15:17            13.360 libOMX.TCC.audio.so
+03-08-2010  15:16            42.364 libOMX.TCC.base.so
+03-08-2010  15:19            29.852 libOMX.TCC.flacdec.so
+03-08-2010  15:19            25.756 libOMX.TCC.mp2dec.so
+03-08-2010  15:19            37.152 libOMX.TCC.mp3dec.so
+03-08-2010  15:19            40.280 libOMX.TCC.mp3enc.so
+03-08-2010  15:19            13.460 libOMX.TCC.pcmdec.so
+03-08-2010  15:20            54.404 libOMX.TCC.radec.so
+04-08-2010  06:41            25.988 libOMX.TCC.VideoDec.so
+04-08-2010  06:41            13.456 libOMX.TCC.VideoEnc.so
+03-08-2010  15:20            87.232 libOMX.TCC.vorbisdec.so
+04-08-2010  06:41           440.104 libOMX.TCC.VPUDec.so
+04-08-2010  06:41           169.104 libOMX.TCC.VPUEnc.so
+03-08-2010  15:20           641.564 libOMX.TCC.wmadec.so
+03-08-2010  15:35           205.292 libomx_aacdec_sharedlibrary.so
+03-08-2010  15:38           130.416 libomx_amrdec_sharedlibrary.so
+03-08-2010  15:31            97.344 libomx_amrenc_sharedlibrary.so
+03-08-2010  15:39            88.020 libomx_avcdec_sharedlibrary.so
+03-08-2010  15:40           137.404 libomx_avcenc_sharedlibrary.so
+03-08-2010  15:40             9.420 libomx_core_interface.so
+03-08-2010  15:42           129.984 libomx_m4vdec_sharedlibrary.so
+03-08-2010  15:44           186.976 libomx_m4venc_sharedlibrary.so
+03-08-2010  15:45            76.112 libomx_mp3dec_sharedlibrary.so
+03-08-2010  15:29            64.740 libomx_sharedlibrary.so
+03-08-2010  14:00             5.188 libTCC.EXT.API.so
+23-07-2010  09:26           393.324 libTCC.MEDIA.ffnode.so
+19-07-2010  05:17             5.148 libTCCdivxdrmutil.so
+19-07-2010  05:17            29.844 libtccm2tsmuxer.so
+03-08-2010  15:24             4.776 libTCC_CDK_CONFIG.so
+19-07-2010  05:17           636.372 libTCC_CDK_LIB.so
+23-07-2010  09:26            63.632 libTCC_CDK_WRAPPER.so
+03-08-2010  15:24            38.768 libTCC_OMXCore.so
+03-08-2010  15:24            74.688 libTCC_RM_DMX.so
+13-10-2010  17:51                 0 pull
+13-07-2010  03:43               669 pvplayer.cfg
+              42 bestand(en)        4.353.882 bytes
+               2 map(pen)  61.506.166.784 bytes beschikbaar

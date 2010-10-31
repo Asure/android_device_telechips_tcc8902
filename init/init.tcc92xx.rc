@@ -1,0 +1,196 @@
+on early-init
+    device mtd@misc 0460 radio diag    
+    device mtd@tcc 0666 root video	
+    insmod /lib/modules/tcc92x_nand.ko
+    insmod /lib/modules/viqe.ko
+    insmod /lib/modules/tcc_sdio.ko
+    insmod /lib/modules/unifi_sdio.ko
+    insmod /lib/modules/ufsd.ko
+    insmod /system/lib/modules/mali.ko
+
+# Telechips device init
+    device /dev/mali 0666 system graphics
+    device /dev/jpeg 0666 root video
+    device /dev/video0 0666 root video
+    device /dev/video1 0666 root video
+    device /dev/graphic 0666 root video
+    device /dev/scaler 0666 root video
+    device /dev/scaler1 0666 root video
+    device /dev/tcc_intr 0666 root video
+    device /dev/tcc-intr-bc 0666 system system
+    device /dev/overlay 0666 root video
+    device /dev/i2c-0 0666 root video
+    device /dev/i2c-1 0666 root video
+    device /dev/i2c-2 0666 root video
+    device /dev/i2c-3 0666 root video
+    device /dev/CEC 0666 root video
+    device /dev/hdmi 0666 root video
+    device /dev/composite 0666 root video
+    device /dev/component 0666 root video
+    device /dev/audio 0666 root video
+    device /dev/hpd 0666 root video
+    device /dev/viqe 0666 root video
+    device /dev/spidev0.0 0666 system system
+    device /dev/tcc-tsif 0666 system system
+    device /dev/tcc-remote 0666 system system
+    device /dev/vpu 0666 system system
+    device /dev/tdmb_tuner 0666 system system
+    device /dev/bl 0666 system system
+    device /dev/tcc_bt_dev 0666 bluetooth bluetooth
+    device /dev/sensor 0666 system system
+    
+on init
+    insmod /system/lib/modules/mali.ko
+
+# change permissions for alsa nodes
+    chmod 0666 /dev/timer
+    chmod 0666 /dev/mem
+    chmod 0666 /dev/intr
+    chmod 0666 /dev/graphics/fb0
+
+# change permissions for gps uart
+    setprop ro.kernel.android.gps tcc-uart5
+		chmod 0666 /dev/tcc-uart5
+		chmod 0666 /dev/gps_gpio
+
+# Atheros +++
+    mkdir /data/system 0777 system system
+    mkdir /var 0777 system system
+    mkdir /var/local 0777 system system
+    chmod 775 /system/wifi/bmiloader
+    chmod 775 /system/wifi/wmiconfig
+    chmod 775 /system/wifi/eeprom.AR6002
+    chmod 775 /system/wifi/loadAR6000.sh
+    chmod 775 /system/wifi/wifi_sta_up.sh
+    chmod 775 /system/wifi/plat_TCC92XX-SDIO.sh
+    mkdir /data/misc/wifi 0770 wifi wifi
+    mkdir /data/misc/wifi/sockets 0770 wifi wifi
+    mkdir /data/misc/wifi/wpa_supplicant 0770 wifi wifi
+    mkdir /data/misc/dhcp 0770 dhcp dhcp
+    chown dhcp dhcp /data/misc/dhcp
+    setprop wifi.interface eth0 
+    setprop wlan.driver.script "wifi_sta_up.sh"
+    setprop wlan.driver.path "/system/wifi"
+    mkdir /data/system/wpa_supplicant 0777 system system  
+# Atheros ---
+
+on boot
+# unmap left alt to avoid console switch
+    setkey 0x0 0x38 0x0
+# dream reset SEND+MENU+END
+    setkey 0x0 0xe7 0x706
+    setkey 0x0 0x8b 0x707
+
+    setkey 0x40 0xe7 0x706
+    setkey 0x40 0x8b 0x707
+
+    setkey 0x80 0xe7 0x706
+    setkey 0x80 0x8b 0x707
+
+    setkey 0xc0 0xe7 0x706
+    setkey 0xc0 0x8b 0x707
+    setkey 0xc0 0x6b 0x20c
+
+    # bluetooth power up/down interface
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/type
+    chown bluetooth bluetooth /sys/class/rfkill/rfkill0/state
+    chmod 0660                /sys/class/rfkill/rfkill0/state
+
+on property:init.svc.wpa_supplicant=stopped
+    stop dhcpcd
+
+on property:init.svc.wpa_supplicant=running
+    start dhcpcd
+
+
+#on property:init.svc.unifi_manager=stopped
+#	start wpa_supplicant
+
+#on property:init.svc.unifi_manager=running
+#	start wpa_supplicant
+
+#setup the DNS server for eth0
+#    setprop net.dns1 192.168.1.36
+#    setprop net.dns2 220.117.180.118
+#    setprop net.dns1 168.126.63.1 # KT DNS
+#    setprop net.dns2 1.1.1.1
+# compass/accelerometer daemon
+#service akmd /system/bin/akmd
+#    user compass
+#    group compass misc input
+
+#service wlan_loader /system/bin/wlan_loader \
+#   -f /system/etc/wifi/Fw1251r1c.bin -e /proc/calibration \
+#  -i /system/etc/wifi/tiwlan.ini
+#    disabled
+#    oneshot
+
+# In case, MMC SLOT 0
+#service unifi_manager /system/bin/unifi_manager \
+#   -s  12:12:12:12:12:12 
+##    disabled
+#    oneshot
+
+# In case, MMC SLOT 1    
+#service unifi_manager /system/bin/unifi_manager \
+#   -s  12:12:12:12:12:12 -d /dev/unifi1
+#    disabled
+#    oneshot    
+
+#service wpa_supplicant /system/bin/wpa_supplicant \
+#    -Deth0 -ieth0 -c/data/misc/wifi/wpa_supplicant.conf
+#    user wifi
+#    group wifi inet
+#    socket wpa_tiwlan0 dgram 660 wifi wifi
+#    disabled
+#    oneshot
+
+#service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/misc/wifi/wpa_supplicant.conf
+#    user wifi
+#    group wifi inet
+#    socket wpa_eth0 dgram 660 wifi wifi
+#    disabled
+#    oneshot
+
+service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/misc/wifi/wpa_supplicant.conf
+     user root
+     group wifi system
+     disabled
+#    oneshot
+
+# for the moment, while debugging dhcpcd, logwrapper is
+# used to get its output to appear in the logs. This will
+# be removed before shipping.
+#service dhcpcd /system/bin/logwrapper dhcpcd -d -X eth0
+#    disabled
+#    oneshot
+
+service dhcpcd /system/bin/dhcpcd -B eth0
+		disabled
+	oneshot
+
+# for CSR Module
+#service bccmd /system/bin/bccmd -t bcsp -d /dev/tcc-uart1 psload /system/key_921600.psr
+service bccmd /system/bin/bccmd -t bcsp -d /dev/tcc-uart1 psload /system/key_3000000.psr
+	disabled
+	oneshot
+
+# for BRCM Module
+#service bcmtool /system/xbin/bcmtool /dev/tcc-uart1 -FILE=/system/BCM4325D0.hcd -ADDR=/system/sample.bdaddr -BAUD=921600
+#service bcmtool /system/xbin/bcmtool /dev/tcc-uart1 -FILE=/system/BCM4325D0.hcd -ADDR=/system/sample.bdaddr -BAUD=3000000 -SCO -SETSCO=0,1,0,1,1,0,0,3,3,0 -LP
+#	disabled
+#	oneshot
+
+#service hciattach /system/bin/hciattach -n -s 3000000 /dev/tcc-uart1 any 3000000 flow
+#service hciattach /system/bin/hciattach -n -s 921600 /dev/tcc-uart1 bcsp 921600 
+service hciattach /system/bin/hciattach -n -s 3000000 /dev/tcc-uart1 bcsp 3000000
+#	user bluetooth
+#	group bluetooth net_bt_admin
+	disabled
+#	oneshot
+
+# rtc
+chmod 666 /dev/rtc0
+########################bjj
+#3g modem
+chmod 777 /system/lib/libreference-ril.so

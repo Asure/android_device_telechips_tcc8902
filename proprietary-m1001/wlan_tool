@@ -1,0 +1,154 @@
+#!/system/bin/sh
+#------------------------------------------------------------------------------
+# <copyright file="makefile" company="Atheros">
+#    Copyright (c) 2005-2010 Atheros Corporation.  All rights reserved.
+# $ATH_LICENSE_HOSTSDK0_C$
+#------------------------------------------------------------------------------
+#==============================================================================
+# Author(s): ="Atheros"
+#==============================================================================
+CLK_HELPER=0
+IFNAME=`getprop wifi.interface wlan0`
+ARGS=`getprop wlan.driver.args "ifname=$IFNAME fwmode=1"`
+TAGS="wlan_tool"
+MODULE_CHECK="ls /sys/bus/sdio/drivers/ar6k_wlan"
+WLAN_ENABLE_CHECK="wmiconfig -i $IFNAME --getRTS"
+DRIVER_PROP_NAME="wlan.driver.status"
+WIFI_STATUS="`getprop $DRIVER_PROP_NAME failed`"
+SYSLOG="log -p i -t $TAGS "
+
+reload() {
+    if $MODULE_CHECK; then
+        rmmod ar6000
+    fi
+    $SYSLOG "Try to load driver with $@"
+    insmod /system/wifi/ar6000.ko $@
+    
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        if $WLAN_ENABLE_CHECK; then
+            break;
+        fi
+        sleep 1
+    done
+}
+
+init() {
+    setprop wifi.interface wlan0
+    mkdir /data/misc/wifi/wpa_supplicant
+    mkdir /data/misc/wifi/hostapd
+    chmod 770 /data/misc/wifi/wpa_supplicant /data/misc/wifi/hostapd
+    chown wifi.wifi /data/misc/wifi/wpa_supplicant /data/misc/wifi/hostapd
+    mv /data/ar6k.log /data/ar6k.previous.log
+    recEvent --logfile=/data/ar6k.log --binary --reclimit=10000&
+    if exp $CLK_HELPER == 1; then
+        reload $ARGS
+        wmiconfig -i $IFNAME --wlan disable
+    fi
+}
+
+loaddriver() {
+    setprop $DRIVER_PROP_NAME ""
+    if $MODULE_CHECK; then
+        $SYSLOG "Driver is initialized. load it"
+        wmiconfig -i $IFNAME --wlan disable
+        sleep 1
+        wmiconfig -i $IFNAME --wlan enable
+    else
+        reload $ARGS
+    fi   
+    if $WLAN_ENABLE_CHECK; then
+        $SYSLOG "ar6000 driver loaded"
+        setprop $DRIVER_PROP_NAME "ok"
+    else
+        $SYSLOG "ar6000 driver fails to load"
+        setprop $DRIVER_PROP_NAME "failed"
+    fi
+}
+
+unloaddriver() {
+    if exp $CLK_HELPER == 1; then
+        wmiconfig -i $IFNAME --wlan disable        
+    else
+        rmmod ar6000
+    fi
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        if ! $WLAN_ENABLE_CHECK; then
+            break;
+        fi
+        sleep 1
+    done
+    setprop $DRIVER_PROP_NAME "unloaded"
+}
+
+testmodeup() {
+    setprop $DRIVER_PROP_NAME ""
+    reload "testmode=1"
+    if $WLAN_ENABLE_CHECK; then
+        $SYSLOG "ar6000 driver loaded"
+        setprop $DRIVER_PROP_NAME "ok"
+    else
+        $SYSLOG "ar6000 driver fails to load"
+        setprop $DRIVER_PROP_NAME "failed"
+    fi
+}
+
+testmodedown() {
+    if $MODULE_CHECK; then
+        rmmod ar6000
+    fi
+    init
+    setprop $DRIVER_PROP_NAME "unloaded"
+}
+
+if ! ls /system/bin/wmiconfig; then
+    $SYSLOG "Cannot find wmiconfig!!!!"
+fi 
+
+case $1 in 
+    dhcpcd)
+    /system/bin/dhcpcd -B $IFNAME
+    ;;
+    wpa_supplicant)
+    /system/bin/wpa_supplicant -Dwext -i$IFNAME -c/data/misc/wifi/wpa_supplicant.conf
+    ;;
+    abtfilt)
+    /system/bin/abtfilt -d -z -n
+    ;;
+    bton)
+    if ! $MODULE_CHECK && exp $CLK_HELPER == 1; then
+        $SYSLOG "Run BT clock helper"
+        init
+    fi
+    setprop wlan.driver.btcoex ok
+    ;;
+    btoff)
+    case $WIFI_STATUS in
+        ok)
+        ;;
+        *)
+        if $MODULE_CHECK && exp $CLK_HELPER == 1; then
+            $SYSLOG "Stop BT clock helper"
+            rmmod ar6000
+        fi
+        ;;
+    esac
+    setprop wlan.driver.btcoex ok
+    ;;
+    unload)    
+    $SYSLOG "wifi unloading"
+    unloaddriver
+    ;;
+    load)
+    $SYSLOG "wifi loading"
+    loaddriver
+    ;;
+    testmodeup)
+    testmodeup
+    ;;
+    testmodedown)
+    testmodedown
+    ;;
+    *) 
+    init
+    ;;
+esac
