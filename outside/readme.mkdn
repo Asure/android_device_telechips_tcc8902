@@ -1,0 +1,8 @@
+Fix me
+------
+
+Copy/overwrite these files to the correct locations:
+
+    vendor/cyanogen/vendorsetup.sh
+    vendor/cyanogen/products/cyanogen_tcc8902.mk
+    vendor/cyanogen/products/AndroidProducts.mk

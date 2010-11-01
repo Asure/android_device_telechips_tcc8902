@@ -11,6 +11,35 @@ Device
 Basic device is the HSG-X5A tablet. You can mix & match the stuff in proprietary to product a build for M1001 or M701.
 We'll fork the device and sort that out later on. :)
 
+
+Bugs / Workarounds
+------------------
+
+1. Wifi driver needs awext, and even then it's not 100% stable.
+Unclear how to include stuff outside the root. You will need to replace wpa_supplicant with the updated version for now.
+(Overwrite the one in external/ folder.)
+
+2. Touchscreen needs better calibration. TSLIB is sort of broken now in CM6 RC1
+We've included pointercal files for x5a and m701 tablets, and a modded InputDevice.java for you to use.
+(Overwrite the files from framework with our versions.)
+
+This is not a perfect solution for the whole family of Telechips tablets, as calibration and touchscreen vary a lot between.
+the different brands and types or even different revisions of the tablets.
+
+Hopefully TSLIB will improve with future releases of CM6, allowing a cleaner implementation.
+(We know the chinese programmers used TSLIB in 2.1, but we have no clue how they did it exactly.)
+
+3. Touchscreen rotation
+On-board sensors of various TCC tablets report the wrong orientation. We do not have source code for the sensors to fix this.
+As is clear from debugging the original 2.1 release, the chinese modified WindowOrientationListener.java instead of the sensor
+code.
+
+So, VenomousNZ has fixed up WindowOrientationListener.java to deal with this as well.
+(Overwrite the files from framework with our version.)
+
+4. Other stuff
+Please see readme in the folder 'outside' and place the files in the respective paths. :)
+
 Getting started
 ---------------
 
@@ -34,7 +63,8 @@ Init the repo for that folder:
 
 Edit the following files to add the tcc8902 target for lunch combo:
     
-    vendorsetup.sh
+    vendor/cyanogen/vendorsetup.sh
+    vendor/cyanogen/products/cyanogen_tcc8902.mk
     
 Please see the [CyanogenMod Wiki](http://wiki.cyanogenmod.com/) for building instructions.
 
